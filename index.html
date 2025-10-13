@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protected Page</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="loginBox">
+  <h2>Enter Password</h2>
+  <input type="password" id="password" placeholder="Password">
+  <br>
+  <button onclick="checkPassword()">Submit</button>
+</div>
+
+<div id="content"></div>
+
+<script>
+  const correctPassword = "mnbvcxz"; // Your password here
+
+  const protectedHTML = `
+    <h1>Welcome to the Protected Page!</h1>
+    <p>This content is now visible because you entered the correct password.</p>
+    <p>You can put any HTML here: text, images, links, etc.</p>
+  `;
+
+  function checkPassword() {
+    const enteredPassword = document.getElementById("password").value;
+    if (enteredPassword === correctPassword) {
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("content").innerHTML = protectedHTML;
+    } else {
+      alert("Incorrect password. Try again!");
+    }
+  }
+
+  // Optional: prevent right-click view source
+  document.addEventListener('contextmenu', event => event.preventDefault());
+</script>
+
+</body>
+</html>
