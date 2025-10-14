@@ -64,3 +64,25 @@ This repository and its contents are provided **"as is"**, without warranty of a
 In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.  
 
 You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software **only if you comply with the terms of the applicable license(s)**.  
+
+# Alpha-for-a-Reason Repository
+
+[![LICENSE / DISCLAIMER](https://img.shields.io/badge/LICENSE-DISCLAIMER-red?style=for-the-badge&logo=github&logoColor=white&labelColor=000000)](#license--disclaimer)
+
+[![MIT](https://img.shields.io/badge/MIT-License-green?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](https://opensource.org/licenses/MIT)
+[![Apache-2.0](https://img.shields.io/badge/Apache-2.0-License-blue?style=for-the-badge&logo=apache&logoColor=white)](https://opensource.org/licenses/Apache-2.0)
+[![GPL-3.0](https://img.shields.io/badge/GPL-3.0-License-orange?style=for-the-badge&logo=gnu&logoColor=white)](https://www.gnu.org/licenses/gpl-3.0)
+
+---
+
+### **LICENSE / DISCLAIMER**
+
+**Copyright (c) 2025 Alpha-for-a-Reason**  
+
+All rights reserved.  
+
+This repository and its contents are provided **"as is"**, without warranty of any kind, express or implied.  
+
+In no event shall the authors or copyright holders be liable for any claim, damages, or other liability arising from the use of this software.  
+
+You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software **only if you comply with the terms of the applicable license(s)**.  
