@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyberpunk Password Gate [ADVANCED]</title>
+<style>
+/* ----- Theme Variables & Cyberpunk body & background (CSS is here) ----- */
+:root {
+    --color-primary: #00ffff; /* Neon Cyan */
+    --color-secondary: #ff00ff; /* Neon Magenta */
+    --color-success: #00ff00;
+    --color-error: #ff0000;
+    --bg-dark: #0f0c29;
+    --bg-medium: #302b63;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Courier New', Courier, monospace; 
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, var(--bg-dark), var(--bg-medium), #24243e);
+    overflow: hidden;
+    color: var(--color-primary);
+}
+
+/* Animated neon dots grid (Enhanced) */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(0,255,255,0.1) 2px, transparent 2px);
+    background-size: 30px 30px;
+    z-index: -1;
+    animation: moveDots 40s linear infinite;
+}
+@keyframes moveDots {
+    0% { background-position: 0 0; }
+    100% { background-position: 1000px 1000px; }
+}
+
+/* Password container */
+#password-container {
+    text-align: center;
+    background: rgba(0,0,0,0.85); 
+    padding: 40px 30px; 
+    max-width: 90vw;
+    width: 400px;
+    border: 2px solid var(--color-primary);
+    border-radius: 15px;
+    box-shadow: 0 0 20px var(--color-secondary), 0 0 40px var(--color-primary);
+    backdrop-filter: blur(12px);
+    transition: transform 0.5s ease-in-out, box-shadow 0.5s; 
+}
+#password-container:hover {
+    box-shadow: 0 0 30px var(--color-secondary), 0 0 60px var(--color-primary);
+}
+
+/* Neon heading */
+#password-container h2 {
+    color: var(--color-secondary);
+    text-shadow: 0 0 5px var(--color-secondary), 0 0 10px var(--color-primary);
+    margin-bottom: 30px; 
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: 900;
+    animation: flicker 1.5s infinite alternate;
+}
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow: 0 0 4px var(--color-secondary), 0 0 10px var(--color-primary), 0 0 20px var(--color-primary);
+        opacity: 1;
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+        opacity: 0.8;
+    }
+}
+
+/* Input fields and button group (Form for better UX) */
+#access-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+#password-input-group {
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+
+#password {
+    flex-grow: 1;
+    width: 100%;
+    padding: 12px;
+    padding-right: 40px;
+    border-radius: 8px; 
+    border: 2px solid var(--color-primary);
+    outline: none;
+    font-size: 1.1rem;
+    background: rgba(0,0,0,0.95);
+    color: var(--color-primary);
+    box-shadow: 0 0 10px var(--color-primary);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    -webkit-text-security: disc;
+    text-security: disc;
+}
+#password.text-visible {
+    -webkit-text-security: none !important;
+    text-security: none !important;
+}
+
+#password:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 15px var(--color-secondary);
+}
+
+/* Toggle button for show/hide password */
+#toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+    transition: color 0.3s;
+}
+#toggle-password:hover {
+    color: var(--color-secondary);
+}
+
+/* Button */
+.access-button {
+    width: 100%;
+    padding: 14px 25px;
+    margin-top: 5px; 
+    border-radius: 8px;
+    border: none;
+    background-color: var(--color-secondary);
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    box-shadow: 0 0 10px var(--color-secondary), 0 0 20px var(--color-primary);
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+.access-button:hover {
+    background-color: var(--color-primary);
+    color: var(--bg-dark);
+    box-shadow: 0 0 20px var(--color-primary), 0 0 40px var(--color-secondary);
+}
+.access-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+    box-shadow: none;
+}
+
+/* Message Display (Replaces Alert) */
+#message-display {
+    min-height: 20px;
+    margin-top: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.5s, color 0.5s, text-shadow 0.5s;
+}
+
+/* Custom message styles */
+.message-success {
+    color: var(--color-success);
+    text-shadow: 0 0 5px var(--color-success);
+}
+.message-error {
+    color: var(--color-error);
+    text-shadow: 0 0 5px var(--color-error);
+}
+.message-visible {
+    opacity: 1;
+}
+
+/* Error/Success Visual Feedback on Input */
+.password-error {
+    border-color: var(--color-error) !important;
+    box-shadow: 0 0 15px var(--color-error) !important;
+}
+.password-success {
+    border-color: var(--color-success) !important;
+    box-shadow: 0 0 15px var(--color-success) !important;
+}
+
+/* Responsive adjustment for desktop layout */
+@media (min-width: 600px) {
+    #access-form {
+        flex-direction: row; 
+        gap: 10px;
+    }
+    #password-input-group {
+        width: auto;
+    }
+    #password {
+        min-width: 200px;
+    }
+    .access-button {
+        width: auto;
+        margin-top: 0;
+    }
+}
+
+
+/* --- Footer Structure & Styling --- */
+
+/* Main Footer Container */
+#main-footer {
+    position: absolute;
+    bottom: 0;
+    width: 90%; 
+    max-width: 500px;
+    padding: 10px 0;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    z-index: 10;
+}
+
+/* Original text style, now a div inside the footer */
+#footer-text-title {
+    color: var(--color-secondary);
+    text-shadow: 0 0 5px var(--color-secondary), 0 0 10px var(--color-primary);
+    margin-bottom: 8px;
+}
+
+/* Disclaimer/License Links Group */
+#disclaimer-links {
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+}
+
+#disclaimer-links a {
+    color: var(--color-primary);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s, text-shadow 0.3s;
+    padding: 0 5px;
+    cursor: pointer;
+}
+
+#disclaimer-links a:hover {
+    color: var(--color-secondary); 
+    text-shadow: 0 0 5px var(--color-secondary);
+}
+
+.separator {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Hidden Content Styles */
+.footer-content {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--color-primary);
+    padding: 10px;
+    border-radius: 5px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, border-color 0.3s;
+    text-align: left;
+    margin-top: 10px;
+}
+
+.footer-content.active {
+    max-height: 400px; /* Increased height for license badges */
+    opacity: 1;
+    border-color: var(--color-secondary);
+}
+
+/* --- License Grid Styling --- */
+.license-grid {
+    overflow-y: auto; /* Allow scrolling if there are too many badges */
+    padding: 10px;
+}
+.license-badges {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 5px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.license-badges img {
+    height: 20px; 
+    vertical-align: middle;
+}
+.license-note {
+    font-size: 0.7rem;
+    color: var(--color-primary);
+    text-align: center;
+    margin: 0;
+}
+</style>
+</head>
+<body>
+
+<div id="password-container">
+    <h2><span style="font-size: 0.8em;">>></span> 𝗢𝗡𝗜𝗢𝗡 𝗗𝗥𝗜𝗩𝗘 <span style="font-size: 0.8em;"><<</span></h2>
+    <form id="access-form">
+        <div id="password-input-group">
+            <input type="password" id="password" placeholder="ENTER ACCESS CODE" autocomplete="off">
+            <button type="button" id="toggle-password" title="Show/Hide Password">👁️</button>
+        </div>
+        <button type="submit" id="submit-button" class="access-button">SCAN ACCESS</button>
+    </form>
+    
+    <!-- This is the element used to display the temporary message -->
+    <div id="message-display">Awaiting Input...</div>
+</div>
+
+<!-- FOOTER SECTION with interactive Disclaimer and Licenses -->
+<footer id="main-footer">
+    <div id="footer-text-title">
+        SYSTEM LOG: CONNECTION STABLE | Copyright (c) 2025 Alpha-for-a-Reason
+    </div>
+    <div id="disclaimer-links">
+        <a onclick="showFooterSection('disclaimer')">DISCLAIMER</a>
+        <span class="separator">|</span>
+        <a onclick="showFooterSection('license-menu')">LICENSE</a>
+    </div>
+    
+    <!-- Hidden Content Sections -->
+    <div id="disclaimer-content" class="footer-content">
+        <p>WARNING: This system is for authorized personnel only. Unauthorized access is subject to prosecution. Data transfer logging enabled. By proceeding, you agree to the terms of access.</p>
+    </div>
+    
+    <!-- Dedicated License Menu Content (with all badges) -->
+    <div id="license-menu-content" class="footer-content license-grid">
+        <p class="license-note">This work is licensed under an amalgamation of the licenses below, prioritizing **MIT** for base code components. Click any badge to view the full license text.</p>
+        <div class="license-badges">
+            <!-- MIT & Permissive Licenses -->
+            <a href="https://opensource.org/licenses/MIT" target="_blank" title="MIT License"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+            <a href="https://opensource.org/licenses/ISC" target="_blank" title="ISC License"><img src="https://img.shields.io/badge/License-ISC-blue.svg" alt="License: ISC"></a>
+            <a href="https://opensource.org/licenses/BSD-2-Clause" target="_blank" title="BSD 2-Clause License"><img src="https://img.shields.io/badge/License-BSD--2--Clause-blue.svg" alt="License: BSD-2-Clause"></a>
+            <a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank" title="BSD 3-Clause License"><img src="https://img.shields.io/badge/License-BSD--3--Clause-blue.svg" alt="License: BSD-3-Clause"></a>
+            <a href="https://opensource.org/licenses/0BSD" target="_blank" title="0BSD License"><img src="https://img.shields.io/badge/License-0BSD-blue.svg" alt="License: 0BSD"></a>
+            <a href="http://unlicense.org/" target="_blank" title="Unlicense"><img src="https://img.shields.io/badge/License-Unlicense-blue.svg" alt="License: Unlicense"></a>
+            <a href="http://www.wtfpl.net/" target="_blank" title="WTFPL"><img src="https://img.shields.io/badge/License-WTFPL-blue.svg" alt="License: WTFPL"></a>
+
+            <!-- Apache & Similar -->
+            <a href="https://opensource.org/licenses/Apache-2.0" target="_blank" title="Apache-2.0 License"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License: Apache-2.0"></a>
+            <a href="https://opensource.org/licenses/ECL-2.0" target="_blank" title="ECL-2.0 License"><img src="https://img.shields.io/badge/License-ECL--2.0-blue.svg" alt="License: ECL-2.0"></a>
+
+            <!-- Copyleft Licenses -->
+            <a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank" title="GPL-3.0 License"><img src="https://img.shields.io/badge/License-GPL--3.0-blue.svg" alt="License: GPL-3.0"></a>
+            <a href="https://www.gnu.org/licenses/lgpl-3.0" target="_blank" title="LGPL-3.0 License"><img src="https://img.shields.io/badge/License-LGPL--3.0-blue.svg" alt="License: LGPL-3.0"></a>
+            <a href="https://www.gnu.org/licenses/agpl-3.0" target="_blank" title="AGPL-3.0 License"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="License: AGPL-3.0"></a>
+
+            <!-- Mozilla & Public Licenses -->
+            <a href="https://opensource.org/licenses/MPL-2.0" target="_blank" title="MPL-2.0 License"><img src="https://img.shields.io/badge/License-MPL--2.0-blue.svg" alt="License: MPL-2.0"></a>
+            <a href="https://opensource.org/licenses/EPL-2.0" target="_blank" title="EPL 2.0 License"><img src="https://img.shields.io/badge/License-EPL--2.0-blue.svg" alt="License: EPL-2.0"></a>
+            <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" title="CC0 1.0 Public Domain"><img src="https://img.shields.io/badge/License-CC0--1.0-blue.svg" alt="License: CC0-1.0"></a>
+
+            <!-- Creative Commons & Data Licenses -->
+            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" title="CC BY 4.0 License"><img src="https://img.shields.io/badge/License-CC--BY--4.0-blue.svg" alt="License: CC-BY-4.0"></a>
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" title="CC BY-SA 4.0 License"><img src="https://img.shields.io/badge/License-CC--BY--SA--4.0-blue.svg" alt="License: CC-BY-SA-4.0"></a>
+
+            <!-- Other Common Licenses -->
+            <a href="https://opensource.org/licenses/AFL-3.0" target="_blank" title="AFL-3.0 License"><img src="https://img.shields.io/badge/License-AFL--3.0-blue.svg" alt="License: AFL-3.0"></a>
+            <a href="https://opensource.org/licenses/Artistic-2.0" target="_blank" title="Artistic-2.0 License"><img src="https://img.shields.io/badge/License-Artistic--2.0-blue.svg" alt="License: Artistic-2.0"></a>
+            <a href="https://opensource.org/licenses/BSL-1.0" target="_blank" title="BSL-1.0 License"><img src="https://img.shields.io/badge/License-BSL--1.0-blue.svg" alt="License: BSL-1.0"></a>
+            <a href="https://opensource.org/licenses/Zlib" target="_blank" title="Zlib License"><img src="https://img.shields.io/badge/License-Zlib-blue.svg" alt="License: Zlib"></a>
+            <a href="https://opensource.org/licenses/PostgreSQL" target="_blank" title="PostgreSQL License"><img src="https://img.shields.io/badge/License-PostgreSQL-blue.svg" alt="License: PostgreSQL"></a>
+            <a href="https://opensource.org/licenses/NCSA" target="_blank" title="NCSA License"><img src="https://img.shields.io/badge/License-NCSA-blue.svg" alt="License: NCSA"></a>
+        </div>
+        <p class="license-note">All images are served directly from shields.io.</p>
+    </div>
+</footer>
+
+
+<script>
+// The target password for this gate
+const ACCESS_CODE = "mnbvcxz";
+// Delay before redirection (ms)
+const REDIRECT_DELAY = 1000;
+// Duration the message is visible (ms)
+const MESSAGE_DURATION = 3000;
+
+// Get elements once on load
+const passwordInput = document.getElementById("password");
+const messageDisplay = document.getElementById("message-display");
+const accessForm = document.getElementById("access-form");
+const submitButton = document.getElementById("submit-button");
+const toggleButton = document.getElementById("toggle-password");
+const disclaimerContent = document.getElementById('disclaimer-content');
+const licenseMenuContent = document.getElementById('license-menu-content');
+
+
+/**
+ * Handles the visual feedback for the show/hide password toggle.
+ */
+function togglePasswordVisibility() {
+    const isVisible = passwordInput.classList.toggle('text-visible');
+    
+    // Change the icon based on visibility
+    toggleButton.textContent = isVisible ? '🔒' : '👁️';
+    toggleButton.title = isVisible ? 'Hide Password' : 'Show Password';
+}
+
+
+/**
+ * Displays a custom message on the screen and manages button state.
+ * @param {string} message - The message to display.
+ * @param {boolean} isSuccess - True for success (green), false for error (red).
+ */
+function showMessage(message, isSuccess) {
+    // Disable the button while the process runs
+    submitButton.disabled = true;
+
+    // Clear previous classes and text
+    messageDisplay.className = '';
+    passwordInput.classList.remove('password-error', 'password-success');
+
+    // Set new message style
+    messageDisplay.textContent = message;
+    messageDisplay.classList.add('message-visible', isSuccess ? 'message-success' : 'message-error');
+    passwordInput.classList.add(isSuccess ? 'password-success' : 'password-error');
+
+    // Remove the message and feedback after the duration
+    setTimeout(() => {
+        messageDisplay.classList.remove('message-visible', 'message-success', 'message-error');
+        passwordInput.classList.remove('password-error', 'password-success');
+        messageDisplay.textContent = 'Awaiting Input...'; // Reset text
+        submitButton.disabled = false; // Re-enable the button
+    }, MESSAGE_DURATION);
+}
+
+
+/**
+ * Checks the entered password against the hardcoded access code.
+ * @param {Event} event - The form submission event.
+ */
+function checkPassword(event) {
+    event.preventDefault(); 
+    
+    if (submitButton.disabled) return;
+
+    const pass = passwordInput.value.trim();
+
+    if (pass === ACCESS_CODE) {
+        showMessage("ACCESS GRANTED // Redirecting...", true);
+        
+        setTimeout(() => {
+            // Placeholder URL for demonstration. Change this to your actual destination.
+            window.location.href = "https://example.com/access-granted-secure"; 
+        }, REDIRECT_DELAY);
+
+    } else {
+        showMessage("ACCESS DENIED // Intrusion Alert", false);
+        passwordInput.value = '';
+    }
+}
+
+
+/**
+ * Toggles the visibility of a specific footer content section.
+ * @param {string} sectionId - The ID of the section to show ('disclaimer' or 'license-menu').
+ */
+function showFooterSection(sectionId) {
+    
+    // Define all toggleable sections
+    const allSections = [disclaimerContent, licenseMenuContent];
+    
+    // Determine which section to show/hide
+    const target = (sectionId === 'disclaimer') ? disclaimerContent : licenseMenuContent;
+
+    // Hide all other sections and remove active class from links
+    allSections.forEach(el => {
+        if (el !== target) {
+            el.classList.remove('active');
+        }
+    });
+
+    // Toggle the target section
+    target.classList.toggle('active');
+}
+
+// --- Event Listeners ---
+
+// 1. Listen for form submission (handles both button click and ENTER key press)
+accessForm.addEventListener('submit', checkPassword);
+
+// 2. Listen for the toggle button click
+toggleButton.addEventListener('click', togglePasswordVisibility);
+
+// 3. Initial state of the message
+document.addEventListener('DOMContentLoaded', () => {
+    messageDisplay.classList.add('message-visible');
+    messageDisplay.textContent = 'Awaiting Input...';
+});
+</script>
+
+</body>
+</html>
