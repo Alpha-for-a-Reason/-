@@ -110,7 +110,7 @@ body::before {
 function checkPassword() {
     const pass = document.getElementById("password").value;
     if(pass === "mnbvcxz"){ // your password
-        window.location.href = "https://github.com/YOUR_USERNAME/YOUR_REPO#readme";
+        window.location.href = "https://github.com/Alpha-for-a-Reason/-/tree/main";
     } else {
         alert("ACCESS DENIED!");
     }
