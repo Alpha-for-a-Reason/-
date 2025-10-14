@@ -1,47 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Protected Page</title>
-
-  <!-- 👇 This connects your HTML to your CSS -->
-  <link rel="stylesheet" href="assets/css/style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberpunk Themed Page</title>
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+    <div class="login-container">
+        <h1>Enter Password</h1>
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="checkPassword()">Enter</button>
+        <p id="error-msg"></p>
+    </div>
 
-<div id="loginBox">
-  <h2>Enter Password</h2>
-  <input type="password" id="password" placeholder="Password">
-  <br>
-  <button onclick="checkPassword()">Submit</button>
-</div>
+    <script>
+        const correctPassword = "mnbvcxz"; // Your password
 
-<div id="content"></div>
-
-<script>
-  const correctPassword = "mnbvcxz"; // Your password here
-
-  const protectedHTML = `
-    <h1>Welcome to the Protected Page!</h1>
-    <p>This content is now visible because you entered the correct password.</p>
-    <p>You can put any HTML here: text, images, links, etc.</p>
-  `;
-
-  function checkPassword() {
-    const enteredPassword = document.getElementById("password").value;
-    if (enteredPassword === correctPassword) {
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("content").innerHTML = protectedHTML;
-    } else {
-      alert("Incorrect password. Try again!");
-    }
-  }
-
-  // Optional: prevent right-click view source
-  document.addEventListener('contextmenu', event => event.preventDefault());
-</script>
-
+        function checkPassword() {
+            const enteredPassword = document.getElementById("password").value;
+            const errorMsg = document.getElementById("error-msg");
+            if (enteredPassword === correctPassword) {
+                window.location.href = "https://github.com/Alpha-for-a-Reason/-/README.md";
+            } else {
+                errorMsg.textContent = "Incorrect password! Try again.";
+                errorMsg.style.color = "#ff1aff";
+            }
+        }
+    </script>
 </body>
 </html>
